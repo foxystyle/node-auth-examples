@@ -1,9 +1,12 @@
 const router = require('express').Router()
 const jwt = require('jsonwebtoken')
-const User = require('../models/user')
 const bcrypt = require('bcrypt')
 
-router.post('/signup', (req, res) => {
+const User = require('../models/user')
+const handleValidationError = require('../utils/handleValidationError')
+
+router.post('/new', (req, res) => {
+
   // Check if valid headers were sent in request
   if (!req.headers['content-type']) return res.status(400).json({ message: 'Missing Content-Type header' })
   if (req.headers['content-type'] !== 'application/json') return res.status(415).json({ message: `Invalid Content-Type, expected 'application/json', given ${req.headers['content-type']}` })
@@ -13,14 +16,14 @@ router.post('/signup', (req, res) => {
   if (!req.body.password) return res.status(422).json({ message: 'Request body missing `password` property', payload: 'password' })
 
   // Validate body data
-  if (req.body.email.length > 254) return res.status(422).json({ message: 'Email length too high', limit: 254 })
-  if (!req.body.email.match(/^.*@.*\..*$/)) return res.status(422).json({ message: 'Email format invalid' })
+  // if (req.body.email.length > 254) return res.status(422).json({ message: 'Email length too high', limit: 254 })
+  // if (!req.body.email.match(/^.*@.*\..*$/)) return res.status(422).json({ message: 'Email format invalid' })
   if (req.body.password.length < 8) return res.status(422).json({ message: 'Password too short', limit: 8 })
-  if (req.body.password.length > 666) return res.status(422).json({ message: 'Password too long', limit: 666 })
+  // if (req.body.password.length > 666) return res.status(422).json({ message: 'Password too long', limit: 666 })
 
   // Check if email is already in use
-  User.findOne({ email: req.body.email }).lean().exec((err, existingUser) => {
-    if (err) return res.status(500).json({ message: 'Error while checking user existence' })
+  User.findOne({ email: req.body.email }).lean().exec((findError, existingUser) => {
+    if (findError) return res.status(500).json({ message: 'Error while checking user existence' })
     if (existingUser) return res.status(409).json({ message: 'Email already in use' })
 
     // Hash password
@@ -33,8 +36,11 @@ router.post('/signup', (req, res) => {
         password: hashedPassword
       })
       user.save((err) => {
-        if (err) return res.status(500).json({ payload: 'Error while creating new user' })
-        return res.status(201).json({ payload: 'User created' })
+        if (err) {
+          if (err.name === 'ValidationError') return handleValidationError(err, res)
+          return res.status(500).json({ message: 'Error while creating new user' })
+        }
+        return res.status(201).json({ message: 'User created' })
       })
 
     }) // bcrypt.hash

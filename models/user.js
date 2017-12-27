@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const validator = require('validator')
 
 const Schema = mongoose.Schema
 
@@ -9,10 +10,16 @@ module.exports = mongoose.model('User', new Schema({
     required: true,
     trim: true,
     minlength: 3,
+    maxlength: 254,
+    validate: {
+      isAsync: false,
+      validator: validator.isEmail,
+      message: 'Email validation failure',
+    }
   },
   password: {
     type: String,
     require: true,
-    minlength: 8,
+    minlength: 8, // this mostly will be ignored since password is hashed
   },
 }))
