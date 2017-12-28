@@ -3,14 +3,19 @@ const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 global.config = require('./config/config')
 
-const jwt = require('jsonwebtoken')
-const User = require('./models/user')
-
 mongoose.Promise = global.Promise
 mongoose.connect('mongodb://localhost/demo', {
   useMongoClient: true
 }).then((mongoConnection) => {
+  global.mongoConnection = mongoConnection
+
+  server.use(bodyParser.urlencoded({ extended: true }))
   server.use(bodyParser.json())
+
+  server.use((error, req, res, next) => {
+    if (error.type === 'entity.parse.failed') return res.status(422).json({  message: 'Invalid JSON provided' })
+    return next()
+  })
 
   server.get('/', (req, res) => {
     res.status(200).json({ payload: 'Hello world' })

@@ -22,4 +22,8 @@ module.exports = mongoose.model('User', new Schema({
     require: true,
     minlength: 8, // this mostly will be ignored since password is hashed
   },
+  roles: {
+    type: Array,
+    'default': ['Basic']
+  }
 }))
