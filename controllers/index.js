@@ -1,7 +1,7 @@
 const router = require('express').Router()
-const verifyToken = require('../middlewares/verifyToken')
+const authenticate = require('../middlewares/verifyToken')
 
-router.use('/user', require('./user'))
-router.use('/protected', verifyToken, require('./protected'))
+router.use('/auth', require('./auth'))
+router.use('/protected', authenticate, require('./protected'))
 
 module.exports = router

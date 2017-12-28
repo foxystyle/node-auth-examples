@@ -1,6 +1,6 @@
 const router = require('express').Router()
 
-router.get('/', (req, res) => {
+router.get('/whoami', (req, res) => {
   res.status(200).json(req.decoded)
 })
 
