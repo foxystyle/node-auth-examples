@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const authenticate = require('../middlewares/verifyToken')
+const authenticate = require('../middlewares/authenticate')
 
 router.use('/auth', require('./auth'))
 router.use('/protected', authenticate, require('./protected'))

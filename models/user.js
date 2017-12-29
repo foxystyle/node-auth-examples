@@ -23,10 +23,16 @@ const UserSchema = new mongoose.Schema({
     required: [true, 'Password is required'],
     minlength: [8, 'Password too short'],
   },
-  roles: {
-    type: Array,
-    'default': ['Unverified'],
+  verified: {
+    required: true,
+    type: Boolean,
+    default: false,
   },
+  verificationToken: {
+    type: String,
+  },
+}, {
+  timestamps: true,
 })
 
 UserSchema.pre('save', function (next){
@@ -42,7 +48,7 @@ UserSchema.methods.checkPassword = function(inputPassword, callback) {
   bcrypt.compare(inputPassword, this.password, (bcryptCompareError, isMatch) => {
     if (bcryptCompareError) return callback(bcryptCompareError)
     if (isMatch) {
-      const tokenPayload = lodash.pick(this, ['email', 'roles'])
+      const tokenPayload = lodash.pick(this, ['email', 'accountType'])
       const token = jwt.sign(tokenPayload, global.config.secret, {
         expiresIn: 1337,
       })

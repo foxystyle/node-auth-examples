@@ -29,7 +29,6 @@
     "no-shadow": 1,
     "no-undef": 2,
     "no-undef-init": 1,
-    "no-undefined": 1,
     "no-unused-vars": 1,
     "no-use-before-define": 1,
     "comma-spacing": 1,

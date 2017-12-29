@@ -1,8 +1,11 @@
 const server = require('express')()
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
-global.config = require('./config/config')
 
+global.config = require('./config/config')
+const mailer = require('./modules/mailer')
+
+mailer.createTestInstance()
 mongoose.Promise = global.Promise
 mongoose.connect('mongodb://localhost/demo', {
   useMongoClient: true
