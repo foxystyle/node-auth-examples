@@ -20,7 +20,7 @@ router.post('/', (req, res) => {
   // Check if email is already in use
   User.findOne({ email: req.body.email }, (findError, existingUser) => {
     if (findError) return res.status(500).json({ message: 'Error while checking user existence' })
-    if (existingUser) return signIn(req, res, existingUser)
+    if (existingUser) return signIn(req, res, existingUser, 'User exists, signed in')
 
     const user = User({
       email: req.body.email,
@@ -33,13 +33,13 @@ router.post('/', (req, res) => {
         return res.status(500).json({ message: 'Error while creating new user' })
       }
       mailer.sendVerificationToken(user.email, user.verificationToken)
-      return signIn(req, res, user, true)
+      return signIn(req, res, user, 'Created new account, confirm your email')
     })
 
   }) // User.findOne
 }) // router.post
 
-router.get('/verify/:email/:token', (req, res) => {
+router.get('/confirm/:email/:token', (req, res) => {
   User.findOne({ email: req.params.email }, (findErr, user) => {
     if (findErr) return res.status(500).json({ message: 'Error while finding user' })
     if (!user) return res.status(422).json({ message: 'User not found' })
@@ -49,7 +49,7 @@ router.get('/verify/:email/:token', (req, res) => {
       user.verified = true
       user.save((saveErr) => {
         if (saveErr) return res.status(500).json({ message: 'Something went wrong while updating user' })
-        return signIn(req, res, user, true)
+        return signIn(req, res, user, 'Email confirmed, new access token provided')
       })
       return res.status(202).json({ message: 'Email verified' })
     } else return res.status(401).json({ message: 'Invalid token' })

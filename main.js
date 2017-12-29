@@ -16,7 +16,7 @@ mongoose.connect('mongodb://localhost/demo', {
   server.use(bodyParser.json())
 
   server.use((error, req, res, next) => {
-    if (error.type === 'entity.parse.failed') return res.status(422).json({  message: 'Invalid JSON provided' })
+    if (error.type === 'entity.parse.failed') return res.status(422).json({ message: 'Invalid JSON provided' })
     return next()
   })
 

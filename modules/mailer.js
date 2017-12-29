@@ -41,8 +41,8 @@ module.exports = {
       from: '"Authorization service" <no-reply@kunok.me>', // sender address
       to: to, // list of receivers
       subject: 'Email confirmation', // Subject line
-      text: `Visit this link to confirm your email: https://localhost:3000/auth/verify/${to}/${token}`, // plain text body
-      html: `<a href="http://localhost:3000/auth/verify/${to}/${token}">Click here to confirm your email</a>`, // html body
+      text: `Visit this link to confirm your email: https://localhost:3000/auth/confirm/${to}/${token}`, // plain text body
+      html: `<a href="http://localhost:3000/auth/confirm/${to}/${token}">Click here to confirm your email</a>`, // html body
     })
   },
 
