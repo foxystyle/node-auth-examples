@@ -5,11 +5,12 @@ const proxy = require('http-proxy-middleware')
 
 global.config = require('./config/config')
 const mailer = require('./modules/mailer')
+const authenticate = require('./middlewares/authenticate')
 
 mailer.createTestInstance()
 mongoose.Promise = global.Promise
 mongoose.connect('mongodb://localhost/demo', {
-  useMongoClient: true
+  useMongoClient: true,
 }).then((mongoConnection) => {
   global.mongoConnection = mongoConnection
 
@@ -24,12 +25,12 @@ mongoose.connect('mongodb://localhost/demo', {
   const proxyOptions = {
     target: 'http://localhost:4000',
     changeOrigin: true,
-    onProxyReq: (proxyReq, req, res) => {
-
-    }
+    onProxyReq(proxyReq, req) {
+      proxyReq.setHeader('x-identify-email', req.decodedToken.email)
+    },
   }
 
-  server.use('/proxy', proxy(proxyOptions))
+  server.use('/u', authenticate, proxy(proxyOptions))
 
   server.use(require('./controllers'))
 
