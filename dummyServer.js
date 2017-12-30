@@ -5,7 +5,7 @@ server.use(bodyParser.urlencoded({ extended: true }))
 server.use(bodyParser.json())
 
 server.get('/u/whoami', (req, res) => {
-  const email = req.headers['x-identify-email']
+  const email = req.headers['x-access-identity-email']
   res.status(200).json({ email })
 })
 

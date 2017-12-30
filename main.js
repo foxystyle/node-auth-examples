@@ -26,7 +26,7 @@ mongoose.connect('mongodb://localhost/demo', {
     target: 'http://localhost:4000',
     changeOrigin: true,
     onProxyReq(proxyReq, req) {
-      proxyReq.setHeader('x-identify-email', req.decodedToken.email)
+      proxyReq.setHeader('x-access-identity-email', req.decodedToken.email)
     },
   }
 
