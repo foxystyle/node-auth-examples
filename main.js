@@ -3,7 +3,7 @@ const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 const proxy = require('http-proxy-middleware')
 
-global.config = require('./config/config')
+global.config = require('./config')
 const mailer = require('./modules/mailer')
 const authenticate = require('./middlewares/authenticate')
 
