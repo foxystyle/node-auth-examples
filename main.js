@@ -1,6 +1,7 @@
 const server = require('express')()
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
+const proxy = require('http-proxy-middleware')
 
 global.config = require('./config/config')
 const mailer = require('./modules/mailer')
@@ -20,9 +21,15 @@ mongoose.connect('mongodb://localhost/demo', {
     return next()
   })
 
-  server.get('/', (req, res) => {
-    res.status(200).json({ payload: 'Hello world' })
-  })
+  const proxyOptions = {
+    target: 'http://localhost:4000',
+    changeOrigin: true,
+    onProxyReq: (proxyReq, req, res) => {
+
+    }
+  }
+
+  server.use('/proxy', proxy(proxyOptions))
 
   server.use(require('./controllers'))
 

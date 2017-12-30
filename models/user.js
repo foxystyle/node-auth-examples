@@ -36,6 +36,7 @@ const UserSchema = new mongoose.Schema({
 })
 
 UserSchema.pre('save', function (next){
+  this.email = this.email.toLowerCase()
   if (this.isModified('password')) {
     bcrypt.hash(this.password, 10, (hashingError, hashedPassword) => {
       this.password = hashedPassword

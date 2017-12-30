@@ -18,7 +18,7 @@ router.post('/', (req, res) => {
   validateRequestProps.headers(req, res, { 'content-type': 'application/json' })
 
   // Check if email is already in use
-  User.findOne({ email: req.body.email }, (findError, existingUser) => {
+  User.findOne({ email: req.body.email.toLowerCase() }, (findError, existingUser) => {
     if (findError) return res.status(500).json({ message: 'Error while checking user existence' })
     if (existingUser) return signIn(req, res, existingUser, 'User exists, signed in')
 
