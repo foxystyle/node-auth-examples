@@ -6,12 +6,14 @@ const validateRequestProps = require('../utils/validateRequestProps')
 const generateRandomString = require('../utils/generateRandomString')
 const mailer = require('../modules/mailer')
 
+
 function signIn(req, res, user, message = 'Authentication successful'){
-  user.checkPassword(req.body.password, (checkPasswordError, isMatch, token) => {
-    if (checkPasswordError) return res.status(500).json({ message: 'Something went wrong while checking password match' })
-    if (isMatch) return res.status(202).json({ message, token, payload: { user: user.email, roles: user.roles } })
-    return res.status(401).json({ message: 'Invalid password' })
+  user.matchPassword(req.body.password)
+  .then((isMatch) => {
+    if (isMatch) user.createAccessToken().then(token => res.status(202).json({ message, token, payload: { user: user.email, roles: user.roles } }))
+    else return res.status(401).json({ message: 'Invalid password' })
   })
+  .catch(err => res.status(500).json({ message: 'Something went wrong while checking password match' })) // eslint-disable-line no-unused-vars
 }
 
 router.post('/', (req, res) => {
@@ -25,7 +27,7 @@ router.post('/', (req, res) => {
     const user = User({
       email: req.body.email,
       password: req.body.password,
-      verificationToken: generateRandomString(100)
+      verificationToken: generateRandomString(86),
     })
     user.save((err) => {
       if (err) {

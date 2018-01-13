@@ -45,16 +45,25 @@ UserSchema.pre('save', function (next){
   } else next()
 })
 
-UserSchema.methods.checkPassword = function(inputPassword, callback) {
-  bcrypt.compare(inputPassword, this.password, (bcryptCompareError, isMatch) => {
-    if (bcryptCompareError) return callback(bcryptCompareError)
-    if (isMatch) {
-      const tokenPayload = lodash.pick(this, ['email', 'accountType'])
-      const token = jwt.sign(tokenPayload, global.config.secret, {
-        expiresIn: 1337,
-      })
-      return callback(null, true, token)
-    } else callback(null, false)
+UserSchema.methods.validatePassword = function(inputPassword) {
+  return new Promise((resolve, reject) => {
+    bcrypt.compare(inputPassword, this.password, (bcryptCompareError, isMatch) => {
+      if (bcryptCompareError) return reject(bcryptCompareError)
+      if (isMatch) return resolve(true)
+      else return resolve(false)
+    })
+  })
+}
+
+UserSchema.methods.createAccessToken = function(){
+  return new Promise((resolve, reject) => {
+    const tokenPayload = lodash.pick(this, ['email', 'accountType'])
+    jwt.sign(tokenPayload, global.config.secret, {
+      expiresIn: 1337,
+    }, (err, token) => {
+      if (err) return reject(err)
+      resolve(token)
+    })
   })
 }
 
