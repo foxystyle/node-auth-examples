@@ -45,7 +45,7 @@ UserSchema.pre('save', function (next){
   } else next()
 })
 
-UserSchema.methods.validatePassword = function(inputPassword) {
+UserSchema.methods.matchPassword = function(inputPassword) {
   return new Promise((resolve, reject) => {
     bcrypt.compare(inputPassword, this.password, (bcryptCompareError, isMatch) => {
       if (bcryptCompareError) return reject(bcryptCompareError)
