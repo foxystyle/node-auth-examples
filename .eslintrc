@@ -3,6 +3,9 @@
     node: true,
     es6: true,
   },
+  "parserOptions": {
+        "ecmaVersion": 2017
+  },
   rules: {
     "semi": [1, "never"],
     "comma-dangle": [1, "always-multiline"],
